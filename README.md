@@ -1,6 +1,6 @@
 <p align="center">
     <img src="imgs/logo.png" width="230" style="vertical-align: middle; margin-right: 10px"/>
-    <img src="imgs/logo2.png" width="570" style="vertical-align: middle"/>
+    <img src="imgs/logo2.png" width="550" style="vertical-align: middle"/>
 </p>
 
 <p align="center">
