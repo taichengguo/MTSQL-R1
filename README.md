@@ -1,6 +1,6 @@
 <p align="center" style="display: flex; align-items: center; justify-content: center;">
     <img src="imgs/logo.png" width="150"/>
-    <img src="imgs/logo2.png" width="500"/>
+    <img src="imgs/logo2.png" width="400"/>
 <p>
 
 <p align="center">
