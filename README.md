@@ -1,7 +1,7 @@
-<p align="center" style="display: flex; align-items: center; justify-content: center;">
-    <img src="imgs/logo.png" width="150"/>
-    <img src="imgs/logo2.png" width="400"/>
-<p>
+<p align="center">
+    <img src="imgs/logo.png" width="150" style="vertical-align: middle; margin-right: 10px"/>
+    <img src="imgs/logo2.png" width="350" style="vertical-align: middle"/>
+</p>
 
 <p align="center">
   <img src="imgs/demo.gif" alt="demo" width="800">
