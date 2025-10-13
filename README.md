@@ -1,6 +1,6 @@
 <p align="center" style="display: flex; align-items: center; justify-content: center;">
     <img src="imgs/logo.png" width="150"/>
-    <span style="font-size: 50px; margin-left: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96e6a1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Long-Horizon MTSQL-R1</span>
+    <img src="imgs/logo2.png" width="500"/>
 <p>
 
 <p align="center">
