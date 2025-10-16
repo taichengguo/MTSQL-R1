@@ -14,7 +14,7 @@
 
 
 <p align="center">
- &nbsp&nbsp 📄 <a href="">Arxiv</a>&nbsp&nbsp | &nbsp&nbsp🤗 <a href="">Hugging Face</a>&nbsp&nbsp 
+ &nbsp&nbsp 📄 <a href="https://arxiv.org/abs/2510.12831">Arxiv</a>&nbsp&nbsp | &nbsp&nbsp🤗 <a href="">Hugging Face</a>&nbsp&nbsp 
  <p>
 
 <div align="center">
