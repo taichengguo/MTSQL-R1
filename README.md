@@ -25,8 +25,8 @@
 | 🤗 MTSQL-R1 (1.7B) | MTSQL-R1(1.7B) (Will release after internal review) |
 | 🤗 Dataset | CoSQL-Long-Horizon-SFT-RL-Data (Will release after internal review) |
 | 🤗 Dataset | SParC-Long-Horizon-SFT-RL-Data (Will release after internal review) |
-| Code For SFT | Will release after internal review | 
-| Code For RL | Will release after internal review |
+| Code For SFT | Will release after internal review |
+| Code For RL | Will release after internal review | 
 
 </div>
 
