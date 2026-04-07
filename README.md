@@ -19,6 +19,9 @@
 
 <div align="center">
 
+Updates: The internal review will be finalized soon, and our code will be released in around 1 month. 
+
+
 | Resource | Link |
 |----------|------|
 | 🤗 MTSQL-R1 (4B) | MTSQL-R1(4B) (Will release after internal review) |
