@@ -19,17 +19,14 @@
 
 <div align="center">
 
-Updates: The internal review will be finalized soon, and our code will be released in around 1 month. 
-
-
 | Resource | Link |
 |----------|------|
 | 🤗 MTSQL-R1 (4B) | MTSQL-R1(4B) (Will release after internal review) |
 | 🤗 MTSQL-R1 (1.7B) | MTSQL-R1(1.7B) (Will release after internal review) |
 | 🤗 Dataset | CoSQL-Long-Horizon-SFT-RL-Data (Will release after internal review) |
 | 🤗 Dataset | SParC-Long-Horizon-SFT-RL-Data (Will release after internal review) |
-| Code For SFT | Will release after internal review |
-| Code For RL | Will release after internal review | 
+| 💻 Code For SFT | Based on [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory); see [Stage 1](#stage1-self-taught-warm-start-sft) |
+| 💻 Code For RL  | This repository (built on [verl](https://github.com/volcengine/verl)); see [Stage 2](#stage2-end-to-end-long-horizon-reinforcement-learning) |
 
 </div>
 
@@ -45,7 +42,10 @@ Updates: The internal review will be finalized soon, and our code will be releas
 
 - [🌟 Highlights](#highlights)
 - [📖 Introduction](#introduction)
-- [⚙️ Configuration](#configuration)
+- [⚙️ Installation](#installation)
+- [📂 Repository Structure](#repo-structure)
+- [🗄️ Data Preparation](#data-preparation)
+- [🚀 Usage](#usage)
 - [🔄 Training Framework](#training-framework)
   - [Stage1: Self-Taught Warm-Start SFT](#stage1-self-taught-warm-start-sft)
   - [Stage2: End-to-End Long-Horizon Reinforcement Learning](#stage2-end-to-end-long-horizon-reinforcement-learning)
@@ -97,10 +97,146 @@ across multiple turns.
 
 
 
-<h1 id="configuration">⚙️ Configuration</h1>
-Verl == 0.4.1
+<h1 id="installation">⚙️ Installation</h1>
 
-LLamafactory == 0.9.3
+**Environment:**
+- Python 3.10
+- CUDA 12.4
+- verl == 0.4.1
+- LLaMA-Factory == 0.9.3 (used for Stage-1 SFT only)
+
+**Install:**
+
+```bash
+# Clone the repository
+git clone https://github.com/<your-org>/MTSQL-R1.git
+cd MTSQL-R1
+
+# (Recommended) create a clean Python 3.10 environment
+conda create -n mtsql-r1 python=3.10 -y
+conda activate mtsql-r1
+
+# Install verl and runtime dependencies
+pip install -r requirements.txt
+# If running on CUDA GPUs, also install:
+pip install -r requirements-cuda.txt
+# If using the SGLang rollout backend:
+pip install -r requirements_sglang.txt
+
+# Install verl in editable mode
+pip install -e .
+```
+
+For Stage-1 Self-Taught Warm-Start SFT, please install [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) separately in its own environment.
+
+
+<h1 id="repo-structure">📂 Repository Structure</h1>
+
+```
+MTSQL-R1/
+├── verl/                                # Core verl library (training / rollout / workers)
+│   ├── trainer/                         # PPO / GRPO main entry points
+│   ├── tools/eval/                      # SQL execution + evaluation tools
+│   │   ├── exec_eval.py                 # Execute predicted SQL against a DB
+│   │   └── evaluation.py                # Exact match / execution match scorer
+│   ├── utils/reward_score/              # Reward functions used during RL
+│   │   ├── text2sql.py                  # Outcome reward (execution match based)
+│   │   ├── text2sql_exec.py             # Execution-match reward
+│   │   ├── text2sql_exact.py            # Exact-match reward
+│   │   └── text2sql_process.py          # Dense process reward (per-turn)
+│   └── ...
+├── examples/sglang_multiturn/
+│   ├── config/
+│   │   ├── text2sql_multiturn_grpo.yaml         # Main GRPO config for text2sql
+│   │   └── tool_config/text2sql_tool_config.yaml # Tool definitions (DB exec, memory)
+│   └── ...
+├── run_text2sql.sh                      # Main RL training entry (outcome reward)
+├── run_train_text2sql_process.sh        # RL training with dense process reward
+├── run_generation_multiturn*.sh         # Rollout / trajectory generation
+├── run_eval_text2sql*.sh                # Evaluation entries
+├── run_model_convert.sh                 # Convert verl checkpoints to HuggingFace format
+├── requirements*.txt
+└── imgs/
+```
+
+
+<h1 id="data-preparation">🗄️ Data Preparation</h1>
+
+**1. Download the CoSQL and SParC benchmarks** (databases + dialogues) from their original sources:
+- CoSQL: https://yale-lily.github.io/cosql
+- SParC: https://yale-lily.github.io/sparc
+
+**2. Organize the SQLite databases** so the layout matches what the reward functions expect:
+
+```
+PATH/TO/database/
+├── cosql/
+│   └── database/
+│       ├── concert_singer/concert_singer.sqlite
+│       ├── car_1/car_1.sqlite
+│       └── ...
+└── sparc/
+    └── database/
+        └── ...
+```
+
+**3. Point the reward functions at your database directory.** The reward scripts in `verl/utils/reward_score/` contain a line like:
+
+```python
+# TODO: set to your local path to the CoSQL/SParC database directory
+db_dir = f"PATH/TO/database/cosql/database/{db}"
+```
+
+Replace `PATH/TO/database` in the following files with your actual absolute path:
+- `verl/utils/reward_score/text2sql.py`
+- `verl/utils/reward_score/text2sql_exec.py`
+- `verl/utils/reward_score/text2sql_exact.py`
+- `verl/utils/reward_score/text2sql_process.py`
+- `verl/utils/reward_score/eval/exec_eval.py`
+- `verl/utils/reward_score/eval/evaluation.py`
+- `verl/tools/eval/exec_eval.py`
+- `verl/tools/eval/evaluation.py`
+
+**4. Prepare training / evaluation `.parquet` files.** The training scripts expect data under `data/cosql/`, `data/sparc/` with files like `train_sft.parquet`, `test.parquet`, `enforce_sql_test.parquet`, etc. See the `DATA_FOLDER` variable at the top of each `run_*.sh` script.
+
+
+<h1 id="usage">🚀 Usage</h1>
+
+All entry points are shell scripts in the repo root. Before running, open the script and set `MODEL_PATH`, `DATA_FOLDER`, and `CUDA_VISIBLE_DEVICES` to match your environment.
+
+**Stage-2 RL training (outcome reward):**
+```bash
+bash run_text2sql.sh
+```
+
+**Stage-2 RL training (dense process reward):**
+```bash
+bash run_train_text2sql_process.sh
+```
+
+**Rollout / trajectory generation (for Self-Taught data collection in Stage 1):**
+```bash
+bash run_generation_multiturn.sh          # default GRPO rollout
+bash run_generation_multiturn_train.sh    # generate on train split
+bash run_generation_multiturn_adddata.sh  # self-taught incremental rounds
+bash run_generation_multiturn_lessgpu.sh  # smaller-GPU variant
+```
+
+**Evaluation:**
+```bash
+bash run_eval_text2sql.sh                  # RL checkpoint eval
+bash run_eval_text2sql_baseline_long.sh    # long-horizon multi-turn baseline eval
+bash run_eval_text2sql_baseline_short.sh   # short-form (single-turn) baseline eval
+bash run_eval_multiturn.sh                 # multi-turn eval
+```
+
+**Convert trained verl checkpoint to HuggingFace format:**
+```bash
+bash run_model_convert.sh
+```
+
+> Tool and multi-turn behavior (DB execution, memory verification) is driven by `examples/sglang_multiturn/config/tool_config/text2sql_tool_config.yaml` and the GRPO recipe `examples/sglang_multiturn/config/text2sql_multiturn_grpo.yaml`.
+
 
 <h1 id="training-framework">🔄 Training Framework</h1>
 

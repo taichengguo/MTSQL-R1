@@ -1,0 +1,32 @@
+tools:
+  - class_name: "verl.tools.text2sql_tool.Text2sqlTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "exec_sql"
+        description: "A tool for executing sql and return the query results"
+        parameters:
+          type: "object"
+          properties:
+            code:
+              type: "string"
+              description: "The current generated SQL that will be executed"
+          required: ["code"]
+
+  - class_name: "verl.tools.memory_retriever.MemoryRetriever"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function:
+        name: "memory_retrieve"
+        description: "A tool for retrieving the historical questions and ground-truth SQL in this dialogue"
+        parameters:
+          type: "object"
+          properties:
+            code:
+              type: "string"
+              description: "The current generated SQL that needs to be verified coherence with the given historical memory"
+          required: [ "code" ]
