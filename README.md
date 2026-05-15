@@ -21,10 +21,8 @@
 
 | Resource | Link |
 |----------|------|
-| 🤗 MTSQL-R1 (4B) | MTSQL-R1(4B) (Will release after internal review) |
-| 🤗 MTSQL-R1 (1.7B) | MTSQL-R1(1.7B) (Will release after internal review) |
-| 🤗 Dataset | CoSQL-Long-Horizon-SFT-RL-Data (Will release after internal review) |
-| 🤗 Dataset | SParC-Long-Horizon-SFT-RL-Data (Will release after internal review) |
+| 🤗 MTSQL-R1 (4B) | [CoSQL-4B](https://huggingface.co/taicheng/MTSQL-R1-CoSQL-4B), [SParC-4B](https://huggingface.co/taicheng/MTSQL-R1-SPARC-4B)  |
+| 🤗 MTSQL-R1 (1.7B) | [CoSQL-1.7B](https://huggingface.co/taicheng/MTSQL-R1-CoSQL-1.7B),  [SParC-1.7B](https://huggingface.co/taicheng/MTSQL-R1-SPARC-1.7B) |
 | 💻 Code For SFT | Based on [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory); see [Stage 1](#stage1-self-taught-warm-start-sft) |
 | 💻 Code For RL  | This repository (built on [verl](https://github.com/volcengine/verl)); see [Stage 2](#stage2-end-to-end-long-horizon-reinforcement-learning) |
 
